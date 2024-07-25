@@ -11,14 +11,18 @@ const highLow = document.querySelectorAll(".high-low");
 const fiveDayConditions = document.querySelectorAll(".five-day-condition");
 
 async function getData(city, apiKey) {
-  const response = await fetch(
-    `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${apiKey}`,
-    { mode: "cors" }
-  );
-  const weatherDataJson = await response.json();
-  const weatherData = transformData(weatherDataJson);
-  displayToday(weatherData);
-  displayFiveDay(weatherData.fiveDay);
+  try {
+    const response = await fetch(
+      `https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${city}?key=${apiKey}`,
+      { mode: "cors" }
+    );
+    const weatherDataJson = await response.json();
+    const weatherData = transformData(weatherDataJson);
+    displayToday(weatherData);
+    displayFiveDay(weatherData.fiveDay);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function transformData(weatherData) {
@@ -46,7 +50,10 @@ function displayToday(data) {
 function displayFiveDay(fiveDay) {
   for (let i = 0; i < fiveDay.length; i++) {
     const datetime = fiveDay[i].datetime;
-    const temps = [Math.round(fiveDay[i].tempmin), Math.round(fiveDay[i].tempmax)]
+    const temps = [
+      Math.round(fiveDay[i].tempmin),
+      Math.round(fiveDay[i].tempmax),
+    ];
     dayDivs[i].textContent = getWeekDayFromDate(datetime);
     highLow[i].textContent = `${temps[0]}-${temps[1]} ºF`;
     fiveDayConditions[i].textContent = fiveDay[i].conditions;
